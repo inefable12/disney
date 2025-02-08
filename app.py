@@ -28,17 +28,18 @@ def main():
                 opciones_mezcladas[random.randint(0, 3)] = pelicula_correcta
             st.session_state.opciones_mezcladas[emoji] = opciones_mezcladas
     
-    respuestas_usuario = {}
-
+    if "respuestas_usuario" not in st.session_state:
+        st.session_state.respuestas_usuario = {emoji: None for emoji in peliculas.keys()}
+    
     with st.form("quiz_form"):
         for emoji, pelicula_correcta in peliculas.items():
             st.subheader(f"¿Qué película es? {emoji}")
-            respuestas_usuario[emoji] = st.radio("Selecciona una opción:", st.session_state.opciones_mezcladas[emoji], key=emoji)
+            st.session_state.respuestas_usuario[emoji] = st.radio("Selecciona una opción:", st.session_state.opciones_mezcladas[emoji], key=emoji, index=None)
         
         submit_button = st.form_submit_button("Ver resultado")
     
     if submit_button:
-        puntaje = sum(1 for emoji, pelicula_correcta in peliculas.items() if respuestas_usuario[emoji] == pelicula_correcta)
+        puntaje = sum(1 for emoji, pelicula_correcta in peliculas.items() if st.session_state.respuestas_usuario[emoji] == pelicula_correcta)
         st.success(f"Tu puntaje: {puntaje}/10")
         
         if puntaje == 10:
