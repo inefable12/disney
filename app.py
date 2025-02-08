@@ -1,6 +1,5 @@
 import streamlit as st
 import random
-import time
 
 def main():
     st.title("🎬 Adivina la Película con Emojis! 🍿")
@@ -20,21 +19,20 @@ def main():
     }
     
     opciones = list(peliculas.values())
-    puntaje = 0
-
+    respuestas = {}
+    
     for emoji, pelicula_correcta in peliculas.items():
         st.subheader(f"¿Qué película es? {emoji}")
         opciones_mezcladas = random.sample(opciones, 4)
         if pelicula_correcta not in opciones_mezcladas:
             opciones_mezcladas[random.randint(0, 3)] = pelicula_correcta
         
-        respuesta = st.radio("Selecciona una opción:", opciones_mezcladas, key=emoji)
-        
-        if respuesta == pelicula_correcta:
-            puntaje += 1
+        respuestas[emoji] = st.radio("Selecciona una opción:", opciones_mezcladas, key=emoji)
     
     if st.button("Ver resultado"):
+        puntaje = sum(1 for emoji, pelicula_correcta in peliculas.items() if respuestas[emoji] == pelicula_correcta)
         st.success(f"Tu puntaje: {puntaje}/10")
+        
         if puntaje == 10:
             st.balloons()
             st.write("🎉 ¡Perfecto! ¡Eres un experto en películas de Disney! 🎈")
