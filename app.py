@@ -19,17 +19,21 @@ def main():
         "🐉👦": "Mulan"
     }
 
-    opciones = list(peliculas.values())
+    if "opciones_mezcladas" not in st.session_state:
+        st.session_state.opciones_mezcladas = {}
+        opciones = list(peliculas.values())
+        for emoji, pelicula_correcta in peliculas.items():
+            opciones_mezcladas = random.sample(opciones, 4)
+            if pelicula_correcta not in opciones_mezcladas:
+                opciones_mezcladas[random.randint(0, 3)] = pelicula_correcta
+            st.session_state.opciones_mezcladas[emoji] = opciones_mezcladas
+    
     respuestas_usuario = {}
 
     with st.form("quiz_form"):
         for emoji, pelicula_correcta in peliculas.items():
             st.subheader(f"¿Qué película es? {emoji}")
-            opciones_mezcladas = random.sample(opciones, 4)
-            if pelicula_correcta not in opciones_mezcladas:
-                opciones_mezcladas[random.randint(0, 3)] = pelicula_correcta
-            
-            respuestas_usuario[emoji] = st.radio("Selecciona una opción:", opciones_mezcladas, key=emoji)
+            respuestas_usuario[emoji] = st.radio("Selecciona una opción:", st.session_state.opciones_mezcladas[emoji], key=emoji)
         
         submit_button = st.form_submit_button("Ver resultado")
     
